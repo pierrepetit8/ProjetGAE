@@ -30,7 +30,7 @@ public class LoanApproval extends HttpServlet {
         boolean risk = true;
         if(somme < 100000) {
             // acc manager check account
-            URL url = new URL("https://calm-cliffs-46267.herokuapp.com/account/" + idCompte);
+            URL url = new URL("https://calm-cliffs-46267.herokuapp.com/checkAccount/" + idCompte);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             BufferedReader in = new BufferedReader(
@@ -41,14 +41,8 @@ public class LoanApproval extends HttpServlet {
                 content.append(inputLine);
             }
             in.close();
-            try {
-                JSONObject jsonObject = new JSONObject(content.toString());
-                risk = (Boolean) jsonObject.get("risk");
-                response.getWriter().println("res" + risk);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            // if risk
+            response.getWriter().println(content.toString());
+            risk = "true".equals(content.toString());
             if(risk) {
                 // post approval idCompte nom accepte
             } else {
