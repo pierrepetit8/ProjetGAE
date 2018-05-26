@@ -11,4 +11,5 @@
         <servlet-name>LoanApproval</servlet-name>
         <url-pattern>/approval</url-pattern>
     </servlet-mapping>
+
 </web-app>
