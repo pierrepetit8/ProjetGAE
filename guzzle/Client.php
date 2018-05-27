@@ -69,6 +69,50 @@ var_dump($approvals);
  *
  */
 
+echo "\nTEST DU SERVICE ACCMANAGER : \n";
+
+// Affichage de la liste de tous les comptes
+
+$result = $client->request('GET', "http://calm-cliffs-46267.herokuapp.com/account");
+$accounts = (array) json_decode($result->getBody());
+echo "Liste des comptes :";
+var_dump($approvals);
+
+// Récupération du compte bancaire ABC
+$result = $client->request('GET', "http://calm-cliffs-46267.herokuapp.com/account/ABC");
+$account = (array) json_decode($result->getBody());
+
+// Affichage du compte
+var_dump($account);
+
+// Modification de la somme du compte ABC
+
+$result = $client->request('POST', "http://calm-cliffs-46267.herokuapp.com/account/ABC/500");
+
+if ($result->getStatusCode() == 200) {
+    echo "Modification de la somme du compte ABC réalisée avec succès.\n";
+}
+
+// Suppression du compte bancaire ABC
+$result = $client->request('DELETE', "http://calm-cliffs-46267.herokuapp.com/account/ABC");
+if ($result->getStatusCode() == 200) {
+    echo "Suppression de la réponse ABC réalisée avec succès.\n";
+}
+
+// Ajout du compte bancaire ABC
+
+$result = $client->request('POST', "http://calm-cliffs-46267.herokuapp.com/account?idCompte=ABC&nom=TEST&prenom=Test&somme=1000&risk=false");
+if ($result->getStatusCode() == 200) {
+    echo "Ajout de la réponse ABC réalisée avec succès.\n";
+}
+
+// Affichage de la liste de toute les réponse
+
+$result = $client->request('GET', "http://calm-cliffs-46267.herokuapp.com/approval");
+$approvals = (array) json_decode($result->getBody());
+
+echo "Liste des réponses :";
+var_dump($approvals);
 
 /*
  *
