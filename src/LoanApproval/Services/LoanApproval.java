@@ -1,6 +1,5 @@
 package LoanApproval.Services;
 
-import com.google.appengine.api.utils.SystemProperty;
 import com.google.appengine.repackaged.org.json.JSONException;
 import com.google.appengine.repackaged.org.json.JSONObject;
 import javax.servlet.http.HttpServlet;
@@ -8,35 +7,35 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.*;
-import java.util.Properties;
 
 
 public class LoanApproval extends HttpServlet {
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Properties properties = System.getProperties();
-
+    public void doGet(HttpServletRequest request, HttpServletResponse response) {
         response.setContentType("text/plain");
         String idCompte = request.getParameter("idCompte");
         String sommeString = request.getParameter("somme");
         Long somme = Long.valueOf(sommeString);
-        boolean risk;
+        boolean risk = true;
         if(somme < 100000) {
-            // acc manager check account
-            URL url = new URL("https://calm-cliffs-46267.herokuapp.com/checkAccount/" + idCompte);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("GET");
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuffer content = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-                content.append(inputLine);
+            try {
+                URL url = new URL("https://calm-cliffs-46267.herokuapp.com/checkAccount/" + idCompte);
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("GET");
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(con.getInputStream()));
+                String inputLine;
+                StringBuffer content = new StringBuffer();
+                while ((inputLine = in.readLine()) != null) {
+                    content.append(inputLine);
+                }
+                in.close();
+                risk = "true".equals(content.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.setStatus(500);
             }
-            in.close();
-            response.getWriter().println(content.toString());
-            risk = "true".equals(content.toString());
             if(risk) {
                 try {
                     boolean accepte = getApproval(idCompte);
@@ -55,9 +54,9 @@ public class LoanApproval extends HttpServlet {
                 }
 
             } else {
-                giveMoney(idCompte, somme);
-                response.setStatus(200);
                 try {
+                    giveMoney(idCompte, somme);
+                    response.setStatus(200);
                     JSONObject jsonObject = getAccount(idCompte);
                     response.getWriter().println("Crédit accepté: risque faible");
                     response.getWriter().println(jsonObject.toString());

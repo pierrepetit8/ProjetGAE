@@ -14,6 +14,7 @@
     <facet type="google-app-engine" name="Google App Engine">
       <configuration>
         <sdk-home-path>$MODULE_DIR$/../appengine-java-sdk-1.9.63</sdk-home-path>
+        <persistence-api>JPA2</persistence-api>
       </configuration>
     </facet>
   </component>
