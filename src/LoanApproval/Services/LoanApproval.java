@@ -1,12 +1,19 @@
 package LoanApproval.Services;
 
+
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.repackaged.org.json.JSONException;
 import com.google.appengine.repackaged.org.json.JSONObject;
+import com.google.apphosting.datastore.EntityV4;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.*;
+import java.util.Date;
 
 
 public class LoanApproval extends HttpServlet {
@@ -82,6 +89,7 @@ public class LoanApproval extends HttpServlet {
             }
 
         }
+        logRequestDatastore(idCompte);
     }
 
     public void giveMoney(String idCompte, Long somme) throws IOException {
@@ -123,6 +131,14 @@ public class LoanApproval extends HttpServlet {
         }
         inAccount.close();
         return new JSONObject(contentAccount.toString());
+    }
+    public void logRequestDatastore(String idCompte) {
+        Entity request = new Entity("Request");
+        request.setProperty("idCompte", idCompte);
+        request.setProperty("dateRequest", new Date());
+
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        datastore.put(request);
     }
 
 }
