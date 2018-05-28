@@ -20,7 +20,7 @@ public class LoanApproval extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
         response.setContentType("text/plain");
-        String idCompte = request.getParameter("idCompte");
+        String idCompte = null;
         String sommeString = request.getParameter("somme");
         Long somme = Long.valueOf(sommeString);
         boolean risk = true;
@@ -49,10 +49,11 @@ public class LoanApproval extends HttpServlet {
                         giveMoney(idCompte, somme);
                         response.setStatus(200);
                         JSONObject jsonObject = getAccount(idCompte);
-                        response.getWriter().println("Crédit accepté approval OK");
+                        jsonObject.put("message", "Crédit accepté approval OK");
                         response.getWriter().println(jsonObject.toString());
                     } else {
-                        response.getWriter().println("Crédit refusé risque élevé et approval refusée");
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("message", "Crédit refusé risque élevé et approval refusée");
                     }
                 } catch (Exception e) {
                     response.setStatus(500);
@@ -62,10 +63,9 @@ public class LoanApproval extends HttpServlet {
             } else {
                 try {
                     giveMoney(idCompte, somme);
-                    Thread.sleep(10000);
                     response.setStatus(200);
                     JSONObject jsonObject = getAccount(idCompte);
-                    response.getWriter().println("Crédit accepté: risque faible");
+                    jsonObject.put("message", "Crédit accepté: risque faible");
                     response.getWriter().println(jsonObject.toString());
                 } catch (Exception e) {
                     response.setStatus(500);
@@ -78,10 +78,11 @@ public class LoanApproval extends HttpServlet {
                 if(accepte) {
                     giveMoney(idCompte, somme);
                     JSONObject jsonObject = getAccount(idCompte);
-                    response.getWriter().println("Crédit accepté: approval OK");
+                    jsonObject.put("message", "Crédit accepté: approval OK");
                     response.getWriter().println(jsonObject.toString());
                 } else {
-                    response.getWriter().println("Crédit refusé: somme importante et approval refusée");
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("message", "Crédit refusé: somme importante et approval refusée");
                 }
             } catch (Exception e) {
                 response.setStatus(500);
