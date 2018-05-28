@@ -6,7 +6,6 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.repackaged.org.json.JSONException;
 import com.google.appengine.repackaged.org.json.JSONObject;
-import com.google.apphosting.datastore.EntityV4;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -63,6 +62,7 @@ public class LoanApproval extends HttpServlet {
             } else {
                 try {
                     giveMoney(idCompte, somme);
+                    Thread.sleep(10000);
                     response.setStatus(200);
                     JSONObject jsonObject = getAccount(idCompte);
                     response.getWriter().println("Crédit accepté: risque faible");
@@ -93,13 +93,24 @@ public class LoanApproval extends HttpServlet {
     }
 
     public void giveMoney(String idCompte, Long somme) throws IOException {
-        URL urlSomme = new URL("https://calm-cliffs-46267.herokuapp.com/account/" + idCompte + "/" + somme);
-        URLConnection conSomme = urlSomme.openConnection();
-        HttpURLConnection http = (HttpURLConnection)conSomme;
-        http.setRequestMethod("POST");
-        http.setDoOutput(true);
-        OutputStreamWriter out = new OutputStreamWriter(http.getOutputStream());
-        out.close();
+        String url = "https://calm-cliffs-46267.herokuapp.com/account/" + idCompte + "/" + somme;
+        URL obj = new URL(url);
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+        con.setRequestMethod("POST");
+
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.flush();
+        wr.close();
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+
     }
 
     public boolean getApproval(String idCompte) throws IOException, JSONException {
