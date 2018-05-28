@@ -138,6 +138,33 @@ if ($result->getBody() == true) {
 
 echo "\nTEST DU SERVICE LOANAPPROVAL\n";
 
-$result = $client->request('GET', "http://1-dot-inf63app5.appspot.com/approval?idCompte=ABC&somme=444");
 
-var_dump($result->getBody()->getContents());
+$result = $client->request('GET', "http://1-dot-inf63app5.appspot.com/approval?idCompte=ABC&somme=444");
+$result = (array) json_decode($result->getBody()->getContents());
+
+echo "Réponse d'une demande de crédit de 444€ sur un compte n'ayant pas de risque : \n";
+echo($result['message'] . "\n");
+
+$result = $client->request('GET', "http://1-dot-inf63app5.appspot.com/approval?idCompte=AB13&somme=232");
+$result = (array) json_decode($result->getBody()->getContents());
+
+echo "Réponse d'une demande de crédit de 232€ sur un compte ayant un risque (avec approval accepte): \n";
+echo($result['message'] . "\n");
+
+$result = $client->request('GET', "http://1-dot-inf63app5.appspot.com/approval?idCompte=ABC&somme=12000");
+$result = (array) json_decode($result->getBody()->getContents());
+
+echo "Réponse d'une demande de crédit de 12000€ sur un compte n'ayant pas de risque : \n";
+echo($result['message'] . "\n");
+
+$result = $client->request('GET', "http://1-dot-inf63app5.appspot.com/approval?idCompte=AB13&somme=12000");
+$result = (array) json_decode($result->getBody()->getContents());
+
+echo "Réponse d'une demande de crédit de 12000€ sur un compte ayant un risque (avec approval accepte): \n";
+echo($result['message'] . "\n");
+
+$result = $client->request('GET', "http://1-dot-inf63app5.appspot.com/approval?idCompte=AB133&somme=12000");
+$result = (array) json_decode($result->getBody()->getContents());
+
+echo "Réponse d'une demande de crédit de 12000€ sur un compte ayant un risque (avec approval refusee): \n";
+echo($result['message'] . "\n");
