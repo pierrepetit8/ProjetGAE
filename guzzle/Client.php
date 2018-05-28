@@ -135,3 +135,9 @@ if ($result->getBody() == true) {
  * TEST DU SERVICE LOANAPPROVAL
  *
  */
+
+echo "\nTEST DU SERVICE LOANAPPROVAL\n";
+
+$result = $client->request('GET', "http://1-dot-inf63app5.appspot.com/approval?idCompte=ABC&somme=444");
+
+var_dump($result->getBody()->getContents());
